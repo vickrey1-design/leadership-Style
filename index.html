@@ -162,15 +162,17 @@
 
     <div id="app" class="w-full max-w-2xl px-4 py-8">
         
-        <!-- 대기 화면 -->
-        <div id="welcome-screen" class="glass-card p-8 text-center fade-in">
-            <h1 class="text-3xl font-bold mb-4">상황대응 리더십 진단</h1>
-            <p class="text-slate-300 mb-8 leading-relaxed keep-all">
+        <!-- 대기 화면 (정렬 수정 완료) -->
+        <div id="welcome-screen" class="glass-card p-8 md:p-12 fade-in">
+            <h1 class="text-3xl font-bold mb-6 text-white text-left">상황대응 리더십 진단</h1>
+            <p class="text-slate-300 mb-10 leading-relaxed keep-all text-left">
                 조직 내 다양한 상황에 따른 당신의 리더십 스타일과 그 효과성을 객관적으로 진단합니다. 총 12개의 문항에 응답해 주세요.
             </p>
-            <button onclick="startQuiz()" class="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-full font-bold transition-all transform hover:scale-105 shadow-lg shadow-indigo-500/20">
-                진단 시작하기
-            </button>
+            <div class="text-center">
+                <button onclick="startQuiz()" class="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-full font-bold transition-all transform hover:scale-105 shadow-lg shadow-indigo-500/20">
+                    진단 시작하기
+                </button>
+            </div>
         </div>
 
         <!-- 질문 화면 -->
@@ -186,7 +188,7 @@
 
             <div id="question-container" class="mb-4">
                 <div class="bg-indigo-900/20 p-4 rounded-xl border border-indigo-500/20 mb-6">
-                    <h2 id="question-text" class="text-lg md:text-xl font-medium leading-relaxed keep-all"></h2>
+                    <h2 id="question-text" class="text-lg md:text-xl font-medium leading-relaxed keep-all text-left"></h2>
                 </div>
                 <div id="options-container" class="grid grid-cols-1 gap-3">
                     <!-- 선택지 동적 생성 -->
@@ -206,7 +208,7 @@
             <h2 class="text-2xl font-bold text-center mb-8 text-white">진단 결과 보고서</h2>
             
             <div class="mb-10">
-                <h3 class="text-lg font-bold text-indigo-300 mb-4">1. 리더십 스타일 분포 (기준값: 3)</h3>
+                <h3 class="text-lg font-bold text-indigo-300 mb-4 text-left">1. 리더십 스타일 분포 (기준값: 3)</h3>
                 
                 <div class="matrix-container mb-6">
                     <!-- S3 참여적 -->
@@ -215,7 +217,7 @@
                             <div class="count-badge" id="count-S3">0</div>
                             <div id="status-S3" class="status-tag">대기</div>
                         </div>
-                        <div>
+                        <div class="text-left">
                             <div class="matrix-label">참여적 리더십</div>
                             <div class="matrix-desc">의견을 나누고 함께 의사결정</div>
                         </div>
@@ -228,7 +230,7 @@
                             <div class="count-badge" id="count-S2">0</div>
                             <div id="status-S2" class="status-tag">대기</div>
                         </div>
-                        <div>
+                        <div class="text-left">
                             <div class="matrix-label">설득적 리더십</div>
                             <div class="matrix-desc">리더가 자신의 계획을 설정하고 팀원과 협의</div>
                         </div>
@@ -241,7 +243,7 @@
                             <div class="count-badge" id="count-S4">0</div>
                             <div id="status-S4" class="status-tag">대기</div>
                         </div>
-                        <div>
+                        <div class="text-left">
                             <div class="matrix-label">위임적 리더십</div>
                             <div class="matrix-desc">업무를 위임한다</div>
                         </div>
@@ -254,7 +256,7 @@
                             <div class="count-badge" id="count-S1">0</div>
                             <div id="status-S1" class="status-tag">대기</div>
                         </div>
-                        <div>
+                        <div class="text-left">
                             <div class="matrix-label">지시적 리더십</div>
                             <div class="matrix-desc">일일이 지시하고 엄격하게 감독함</div>
                         </div>
@@ -262,7 +264,7 @@
                     </div>
                 </div>
                 
-                <div class="bg-indigo-500/10 p-4 rounded-xl text-xs text-slate-300 leading-relaxed keep-all">
+                <div class="bg-indigo-500/10 p-4 rounded-xl text-xs text-slate-300 leading-relaxed keep-all text-left">
                     <p><strong>💡 결과 해석 가이드:</strong></p>
                     <ul class="mt-2 space-y-1">
                         <li>• <strong>3 미만:</strong> 해당 스타일 발휘가 소극적입니다. 상황에 따른 유연한 적용이 필요합니다.</li>
@@ -273,7 +275,7 @@
             </div>
 
             <div class="mb-10">
-                <h3 class="text-lg font-bold mb-4 text-indigo-300">2. 리더십 효과성 총점</h3>
+                <h3 class="text-lg font-bold mb-4 text-indigo-300 text-left">2. 리더십 효과성 총점</h3>
                 <div class="bg-white/5 p-10 rounded-2xl border border-white/10 flex flex-col items-center">
                     <div class="text-7xl font-black text-white mb-2" id="total-score">0</div>
                     <p class="text-indigo-400 font-medium text-sm">최종 합계 점수</p>
@@ -310,9 +312,9 @@
             { q: "12. 최근 정보에 의하면 직원들 내부에 문제가 생긴 것 같다. 지금까지 직원들은 뛰어난 실적을 기록하고 있으며, 상호간에 협력적인 분위기를 갖고 있다. 직원들의 업무수행 능력은 높은 편이다.", options: { a: "문제해결의 방향을 생각해 보고 직원들과 이를 협의한 후 대책을 결정한다.", b: "직원들 스스로 문제를 해결할 수 있도록 유도한다.", c: "신속히 사태를 개선하기 위해 분명히 지시한다.", d: "문제해결에 직원들을 참여시켜 지원한다." } }
         ];
 
-        // 유형 매핑 로직
+        // 유형 매핑
         const typeMap = { 0: { a: 1, c: 2, b: 3, d: 4 }, 1: { d: 1, a: 2, c: 3, b: 4 }, 2: { c: 1, a: 2, d: 3, b: 4 }, 3: { b: 1, d: 2, a: 3, c: 4 }, 4: { c: 1, b: 2, d: 3, a: 4 }, 5: { b: 1, d: 2, a: 3, c: 4 }, 6: { a: 1, c: 2, b: 3, d: 4 }, 7: { c: 1, b: 2, d: 3, a: 4 }, 8: { c: 1, b: 2, d: 3, a: 4 }, 9: { b: 1, d: 2, a: 3, c: 4 }, 10: { a: 1, c: 2, b: 3, d: 4 }, 11: { c: 1, a: 2, d: 3, b: 4 } };
-        // 효과성 점수 매핑 로직
+        // 효과성 점수 매핑
         const scoreMap = { 0: { d: -2, b: -1, c: 1, a: 2 }, 1: { b: -2, d: -1, c: 1, a: 2 }, 2: { c: -2, b: -1, a: 1, d: 2 }, 3: { b: -2, d: -1, a: 1, c: 2 }, 4: { a: -2, d: -1, b: 1, c: 2 }, 5: { c: -2, a: -1, b: 1, d: 2 }, 6: { a: -2, c: -1, d: 1, b: 2 }, 7: { c: -2, b: -1, d: 1, a: 2 }, 8: { a: -2, d: -1, b: 1, c: 2 }, 9: { b: -2, c: -1, a: 1, d: 2 }, 10: { a: -2, c: -1, d: 1, b: 2 }, 11: { c: -2, a: -1, d: 1, b: 2 } };
 
         let currentQuestion = 0;
@@ -339,7 +341,7 @@
                 btn.className = `option-btn w-full p-4 text-left rounded-xl flex items-start gap-3 fade-in ${isSelected ? 'bg-indigo-600/30 border-indigo-500' : ''}`;
                 btn.innerHTML = `
                     <span class="inline-flex items-center justify-center w-8 h-8 rounded-full ${isSelected ? 'bg-indigo-500 text-white' : 'bg-white/10 text-indigo-400'} text-xs font-bold shrink-0 mt-0.5">${key.toUpperCase()}</span>
-                    <span class="text-sm leading-relaxed keep-all">${text}</span>
+                    <span class="text-sm leading-relaxed keep-all text-left">${text}</span>
                 `;
                 btn.onclick = () => handleAnswer(key);
                 container.appendChild(btn);
@@ -400,11 +402,9 @@
                 }
             });
 
-            // 매트릭스 결과 및 상태 업데이트
             ['S1', 'S2', 'S3', 'S4'].forEach(s => {
                 document.getElementById(`count-${s}`).innerText = counts[s];
                 updateStatus(s, counts[s]);
-                
                 const maxVal = Math.max(counts.S1, counts.S2, counts.S3, counts.S4);
                 if(counts[s] === maxVal && maxVal > 3) {
                     document.getElementById(`box-${s}`).classList.add('active');
@@ -413,7 +413,6 @@
                 }
             });
 
-            // 최종 효과성 총점 (숫자만 표시)
             document.getElementById('total-score').innerText = (totalScore > 0 ? '+' : '') + totalScore;
         }
     </script>
