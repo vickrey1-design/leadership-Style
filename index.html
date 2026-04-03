@@ -29,6 +29,11 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
+        /* 단어 단위 줄바꿈 (모바일 가독성) */
+        .keep-all {
+            word-break: keep-all;
+        }
+
         .option-btn {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             background: rgba(255, 255, 255, 0.03);
@@ -160,10 +165,8 @@
         <!-- 대기 화면 -->
         <div id="welcome-screen" class="glass-card p-8 text-center fade-in">
             <h1 class="text-3xl font-bold mb-4">상황대응 리더십 진단</h1>
-            <p class="text-slate-300 mb-8 leading-relaxed">
-                조직 내 다양한 상황에 따른 당신의 리더십 스타일과<br>
-                그 효과성을 객관적으로 진단합니다.<br>
-                총 12개의 문항에 응답해 주세요.
+            <p class="text-slate-300 mb-8 leading-relaxed keep-all">
+                조직 내 다양한 상황에 따른 당신의 리더십 스타일과 그 효과성을 객관적으로 진단합니다. 총 12개의 문항에 응답해 주세요.
             </p>
             <button onclick="startQuiz()" class="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-full font-bold transition-all transform hover:scale-105 shadow-lg shadow-indigo-500/20">
                 진단 시작하기
@@ -183,9 +186,10 @@
 
             <div id="question-container" class="mb-4">
                 <div class="bg-indigo-900/20 p-4 rounded-xl border border-indigo-500/20 mb-6">
-                    <h2 id="question-text" class="text-lg md:text-xl font-medium leading-relaxed"></h2>
+                    <h2 id="question-text" class="text-lg md:text-xl font-medium leading-relaxed keep-all"></h2>
                 </div>
                 <div id="options-container" class="grid grid-cols-1 gap-3">
+                    <!-- 선택지 동적 생성 -->
                 </div>
             </div>
 
@@ -202,9 +206,7 @@
             <h2 class="text-2xl font-bold text-center mb-8 text-white">진단 결과 보고서</h2>
             
             <div class="mb-10">
-                <div class="flex justify-between items-end mb-4">
-                    <h3 class="text-lg font-bold text-indigo-300">1. 리더십 스타일 분포 (기준값: 3)</h3>
-                </div>
+                <h3 class="text-lg font-bold text-indigo-300 mb-4">1. 리더십 스타일 분포 (기준값: 3)</h3>
                 
                 <div class="matrix-container mb-6">
                     <!-- S3 참여적 -->
@@ -260,7 +262,7 @@
                     </div>
                 </div>
                 
-                <div class="bg-indigo-500/10 p-4 rounded-xl text-xs text-slate-300 leading-relaxed">
+                <div class="bg-indigo-500/10 p-4 rounded-xl text-xs text-slate-300 leading-relaxed keep-all">
                     <p><strong>💡 결과 해석 가이드:</strong></p>
                     <ul class="mt-2 space-y-1">
                         <li>• <strong>3 미만:</strong> 해당 스타일 발휘가 소극적입니다. 상황에 따른 유연한 적용이 필요합니다.</li>
@@ -292,7 +294,7 @@
     </div>
 
     <script>
-        // 질문 데이터
+        // 12개 진단 문항 데이터
         const questions = [
             { q: "1. 당신은 직원들과 친근하게 대화하려 하고 직원들을 배려하는 편이다. 하지만 직원들은 반응을 보이지 않고 업무 성과도 급격히 떨어지고 있다.", options: { a: "정해진 절차대로 일을 하고 업무를 완수해야 할 필요성을 강조한다.", b: "상담을 요청하면 효과적으로 대응하지만 깊이 개입은 하지 않는다.", c: "직원과 대화를 나누고 목표를 설정해 준다.", d: "의도적으로 개입하지 않는다." } },
             { q: "2. 당신은 직원들 모두가 자신의 책임과 기대되는 업무성과 기준을 인식할 수 있도록 노력하고 있으며, 직원들의 업무성과도 좋아지고 있는 듯이 보인다.", options: { a: "친밀하게 직원들을 대하는 한편, 직원들이 자신의 책임과 기대되는 업무성과 기준을 인식하도록 유도한다.", b: "분명한 조치를 취하지 않는다.", c: "직원들이 자신감을 갖고 스스로 하는 일의 중요성을 인식하도록 유도한다.", d: "업무의 중요성과 마감기한을 재강조한다." } },
@@ -308,11 +310,13 @@
             { q: "12. 최근 정보에 의하면 직원들 내부에 문제가 생긴 것 같다. 지금까지 직원들은 뛰어난 실적을 기록하고 있으며, 상호간에 협력적인 분위기를 갖고 있다. 직원들의 업무수행 능력은 높은 편이다.", options: { a: "문제해결의 방향을 생각해 보고 직원들과 이를 협의한 후 대책을 결정한다.", b: "직원들 스스로 문제를 해결할 수 있도록 유도한다.", c: "신속히 사태를 개선하기 위해 분명히 지시한다.", d: "문제해결에 직원들을 참여시켜 지원한다." } }
         ];
 
+        // 유형 매핑 로직
         const typeMap = { 0: { a: 1, c: 2, b: 3, d: 4 }, 1: { d: 1, a: 2, c: 3, b: 4 }, 2: { c: 1, a: 2, d: 3, b: 4 }, 3: { b: 1, d: 2, a: 3, c: 4 }, 4: { c: 1, b: 2, d: 3, a: 4 }, 5: { b: 1, d: 2, a: 3, c: 4 }, 6: { a: 1, c: 2, b: 3, d: 4 }, 7: { c: 1, b: 2, d: 3, a: 4 }, 8: { c: 1, b: 2, d: 3, a: 4 }, 9: { b: 1, d: 2, a: 3, c: 4 }, 10: { a: 1, c: 2, b: 3, d: 4 }, 11: { c: 1, a: 2, d: 3, b: 4 } };
+        // 효과성 점수 매핑 로직
         const scoreMap = { 0: { d: -2, b: -1, c: 1, a: 2 }, 1: { b: -2, d: -1, c: 1, a: 2 }, 2: { c: -2, b: -1, a: 1, d: 2 }, 3: { b: -2, d: -1, a: 1, c: 2 }, 4: { a: -2, d: -1, b: 1, c: 2 }, 5: { c: -2, a: -1, b: 1, d: 2 }, 6: { a: -2, c: -1, d: 1, b: 2 }, 7: { c: -2, b: -1, d: 1, a: 2 }, 8: { a: -2, d: -1, b: 1, c: 2 }, 9: { b: -2, c: -1, a: 1, d: 2 }, 10: { a: -2, c: -1, d: 1, b: 2 }, 11: { c: -2, a: -1, d: 1, b: 2 } };
 
         let currentQuestion = 0;
-        let userAnswers = Array(12).fill(null); // 초기 답변 배열 (null로 채움)
+        let userAnswers = Array(12).fill(null);
 
         function startQuiz() {
             document.getElementById('welcome-screen').classList.add('hidden');
@@ -332,17 +336,15 @@
             Object.entries(question.options).forEach(([key, text]) => {
                 const isSelected = userAnswers[currentQuestion] === key;
                 const btn = document.createElement('button');
-                // 이전에 선택했던 답이라면 강조 표시
                 btn.className = `option-btn w-full p-4 text-left rounded-xl flex items-start gap-3 fade-in ${isSelected ? 'bg-indigo-600/30 border-indigo-500' : ''}`;
                 btn.innerHTML = `
                     <span class="inline-flex items-center justify-center w-8 h-8 rounded-full ${isSelected ? 'bg-indigo-500 text-white' : 'bg-white/10 text-indigo-400'} text-xs font-bold shrink-0 mt-0.5">${key.toUpperCase()}</span>
-                    <span class="text-sm leading-relaxed">${text}</span>
+                    <span class="text-sm leading-relaxed keep-all">${text}</span>
                 `;
                 btn.onclick = () => handleAnswer(key);
                 container.appendChild(btn);
             });
 
-            // 이전 문항 버튼 제어 (첫 문항에서는 숨김)
             const prevBtn = document.getElementById('prev-btn');
             if (currentQuestion > 0) {
                 prevBtn.classList.remove('hidden');
@@ -352,7 +354,7 @@
         }
 
         function handleAnswer(key) {
-            userAnswers[currentQuestion] = key; // 답변 저장 (인덱스 기반)
+            userAnswers[currentQuestion] = key;
             if (currentQuestion < 11) {
                 currentQuestion++;
                 renderQuestion();
@@ -398,12 +400,11 @@
                 }
             });
 
-            // 매트릭스 숫자 및 상태 업데이트
+            // 매트릭스 결과 및 상태 업데이트
             ['S1', 'S2', 'S3', 'S4'].forEach(s => {
                 document.getElementById(`count-${s}`).innerText = counts[s];
                 updateStatus(s, counts[s]);
                 
-                // 주된 유형 강조 (가장 높은 것 중 3 초과일 때)
                 const maxVal = Math.max(counts.S1, counts.S2, counts.S3, counts.S4);
                 if(counts[s] === maxVal && maxVal > 3) {
                     document.getElementById(`box-${s}`).classList.add('active');
@@ -412,7 +413,7 @@
                 }
             });
 
-            // 효과성 점수 업데이트 (숫자만 표시)
+            // 최종 효과성 총점 (숫자만 표시)
             document.getElementById('total-score').innerText = (totalScore > 0 ? '+' : '') + totalScore;
         }
     </script>
