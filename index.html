@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상황대응 리더십 진단 - Learn and Insight</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        /* 글래스모피즘 효과 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .option-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .option-btn:hover {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8b5cf6, #3b82f6);
+            transition: width 0.4s ease;
+        }
+
+        /* 매트릭스 스타일링 */
+        .matrix-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 12px;
+            position: relative;
+            width: 100%;
+        }
+
+        .matrix-box {
+            padding: 16px;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 160px;
+            transition: all 0.3s ease;
+        }
+
+        .matrix-box.active {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.4);
+        }
+
+        .count-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .count-badge {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #f8fafc;
+            line-height: 1;
+        }
+
+        .status-tag {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-low { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .status-equal { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .status-high { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+
+        .matrix-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #8b5cf6;
+            margin-bottom: 4px;
+        }
+
+        .matrix-desc {
+            font-size: 0.7rem;
+            line-height: 1.4;
+            color: #94a3b8;
+            word-break: keep-all;
+        }
+
+        .matrix-id {
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            opacity: 0.15;
+            color: #fff;
+        }
+
+        .footer-text {
+            font-size: 0.75rem;
+            opacity: 0.5;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .hidden { display: none; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.5s forwards; }
+
+        @media print {
+            body { background: white; color: black; }
+            .glass-card { box-shadow: none; border: 1px solid #ccc; background: white; color: black; }
+            .matrix-box { border: 1px solid #eee; background: white !important; color: black; }
+            button { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app" class="w-full max-w-2xl px-4 py-8">
+        
+        <!-- 대기 화면 -->
+        <div id="welcome-screen" class="glass-card p-8 text-center fade-in">
+            <h1 class="text-3xl font-bold mb-4">상황대응 리더십 진단</h1>
+            <p class="text-slate-300 mb-8 leading-relaxed">
+                조직 내 다양한 상황에 따른 당신의 리더십 스타일과<br>
+                그 효과성을 객관적으로 진단합니다.<br>
+                총 12개의 문항에 응답해 주세요.
+            </p>
+            <button onclick="startQuiz()" class="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-full font-bold transition-all transform hover:scale-105 shadow-lg shadow-indigo-500/20">
+                진단 시작하기
+            </button>
+        </div>
+
+        <!-- 질문 화면 -->
+        <div id="quiz-screen" class="glass-card p-6 md:p-10 hidden fade-in">
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-indigo-400" id="progress-text">문항 1 / 12</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill" style="width: 8.33%"></div>
+                </div>
+            </div>
+
+            <div id="question-container" class="mb-4">
+                <div class="bg-indigo-900/20 p-4 rounded-xl border border-indigo-500/20 mb-6">
+                    <h2 id="question-text" class="text-lg md:text-xl font-medium leading-relaxed"></h2>
+                </div>
+                <div id="options-container" class="grid grid-cols-1 gap-3">
+                </div>
+            </div>
+
+            <!-- 하단 컨트롤 버튼 -->
+            <div class="flex justify-start mt-6">
+                <button id="prev-btn" onclick="prevQuestion()" class="px-6 py-2 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-lg text-sm font-medium transition-all hidden">
+                    ← 이전 문항으로 돌아가기
+                </button>
+            </div>
+        </div>
+
+        <!-- 결과 화면 -->
+        <div id="result-screen" class="glass-card p-8 hidden fade-in">
+            <h2 class="text-2xl font-bold text-center mb-8 text-white">진단 결과 보고서</h2>
+            
+            <div class="mb-10">
+                <div class="flex justify-between items-end mb-4">
+                    <h3 class="text-lg font-bold text-indigo-300">1. 리더십 스타일 분포 (기준값: 3)</h3>
+                </div>
+                
+                <div class="matrix-container mb-6">
+                    <!-- S3 참여적 -->
+                    <div class="matrix-box relative" id="box-S3">
+                        <div class="count-area">
+                            <div class="count-badge" id="count-S3">0</div>
+                            <div id="status-S3" class="status-tag">대기</div>
+                        </div>
+                        <div>
+                            <div class="matrix-label">참여적 리더십</div>
+                            <div class="matrix-desc">의견을 나누고 함께 의사결정</div>
+                        </div>
+                        <div class="matrix-id">S3</div>
+                    </div>
+                    
+                    <!-- S2 설득적 -->
+                    <div class="matrix-box relative" id="box-S2">
+                        <div class="count-area">
+                            <div class="count-badge" id="count-S2">0</div>
+                            <div id="status-S2" class="status-tag">대기</div>
+                        </div>
+                        <div>
+                            <div class="matrix-label">설득적 리더십</div>
+                            <div class="matrix-desc">리더가 자신의 계획을 설정하고 팀원과 협의</div>
+                        </div>
+                        <div class="matrix-id">S2</div>
+                    </div>
+                    
+                    <!-- S4 위임적 -->
+                    <div class="matrix-box relative" id="box-S4">
+                        <div class="count-area">
+                            <div class="count-badge" id="count-S4">0</div>
+                            <div id="status-S4" class="status-tag">대기</div>
+                        </div>
+                        <div>
+                            <div class="matrix-label">위임적 리더십</div>
+                            <div class="matrix-desc">업무를 위임한다</div>
+                        </div>
+                        <div class="matrix-id">S4</div>
+                    </div>
+                    
+                    <!-- S1 지시적 -->
+                    <div class="matrix-box relative" id="box-S1">
+                        <div class="count-area">
+                            <div class="count-badge" id="count-S1">0</div>
+                            <div id="status-S1" class="status-tag">대기</div>
+                        </div>
+                        <div>
+                            <div class="matrix-label">지시적 리더십</div>
+                            <div class="matrix-desc">일일이 지시하고 엄격하게 감독함</div>
+                        </div>
+                        <div class="matrix-id">S1</div>
+                    </div>
+                </div>
+                
+                <div class="bg-indigo-500/10 p-4 rounded-xl text-xs text-slate-300 leading-relaxed">
+                    <p><strong>💡 결과 해석 가이드:</strong></p>
+                    <ul class="mt-2 space-y-1">
+                        <li>• <strong>3 미만:</strong> 해당 스타일 발휘가 소극적입니다. 상황에 따른 유연한 적용이 필요합니다.</li>
+                        <li>• <strong>3 적정:</strong> 이상적인 균형 상태입니다. 해당 상황에 적절히 대응하고 있습니다.</li>
+                        <li>• <strong>3 초과:</strong> 특정 스타일을 과하게 사용 중입니다. 상황에 맞는 조절이 필요합니다.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb-10">
+                <h3 class="text-lg font-bold mb-4 text-indigo-300">2. 리더십 효과성 총점</h3>
+                <div class="bg-white/5 p-10 rounded-2xl border border-white/10 flex flex-col items-center">
+                    <div class="text-7xl font-black text-white mb-2" id="total-score">0</div>
+                    <p class="text-indigo-400 font-medium text-sm">최종 합계 점수</p>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="location.reload()" class="flex-1 py-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-bold transition-all">
+                    다시 진단
+                </button>
+                <button onclick="window.print()" class="flex-1 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-bold transition-all">
+                    결과 인쇄/저장
+                </button>
+            </div>
+        </div>
+
+        <p class="footer-text">Copyright 2026 Learn and Insight All Rights Reserved.</p>
+    </div>
+
+    <script>
+        // 질문 데이터
+        const questions = [
+            { q: "1. 당신은 직원들과 친근하게 대화하려 하고 직원들을 배려하는 편이다. 하지만 직원들은 반응을 보이지 않고 업무 성과도 급격히 떨어지고 있다.", options: { a: "정해진 절차대로 일을 하고 업무를 완수해야 할 필요성을 강조한다.", b: "상담을 요청하면 효과적으로 대응하지만 깊이 개입은 하지 않는다.", c: "직원과 대화를 나누고 목표를 설정해 준다.", d: "의도적으로 개입하지 않는다." } },
+            { q: "2. 당신은 직원들 모두가 자신의 책임과 기대되는 업무성과 기준을 인식할 수 있도록 노력하고 있으며, 직원들의 업무성과도 좋아지고 있는 듯이 보인다.", options: { a: "친밀하게 직원들을 대하는 한편, 직원들이 자신의 책임과 기대되는 업무성과 기준을 인식하도록 유도한다.", b: "분명한 조치를 취하지 않는다.", c: "직원들이 자신감을 갖고 스스로 하는 일의 중요성을 인식하도록 유도한다.", d: "업무의 중요성과 마감기한을 재강조한다." } },
+            { q: "3. 직원들은 업무 상의 문제를 자신의 능력으로 처리하지 못하고 있다. 이제까지 대체로 간섭을 하지 않았지만 업무성과도 좋고, 서로간의 인간관계도 양호하다.", options: { a: "직원들에게 도움을 주며, 직원들과 함께 문제를 해결한다.", b: "직원들 스스로 문제를 처리하도록 놓아둔다.", c: "즉각 명확한 시정조치를 지시한다.", d: "직원들 스스로 문제를 해결하도록 격려 및 지원적인 자세를 보인다." } },
+            { q: "4. 업무에 변화를 가져오고자 한다. 직원들은 뛰어난 실적을 기록하고 있으며, 변화가 필요하다는 사실도 충분히 인식하고 있다.", options: { a: "변화에 대한 직원들의 의견을 수렴해 참여시키고 지나친 지시는 하지 않는다.", b: "리더가 변화 방향을 결정한 다음 주의 깊게 감독하며 추진한다.", c: "직원들에게 변화 방향의 결정을 맡긴다.", d: "직원들의 의견을 받아 들이지만 변화의 도입과 추진은 리더가 주도한다." } },
+            { q: "5. 최근 수개월간 실적이 하락하고 있고 고객 클레임도 증가하고 있다. 직원들은 목표달성에 관심이 없는 것 같다. 전에도 직원의 역할과 책임을 분명히 하는 것이 필요했으며, 업무도 기한 내 정확히 완수하도록 계속적인 주의집중이 요구되었었다.", options: { a: "직원들에게 모든 조치나 방향결정을 맡긴다.", b: "직원들의 의견을 받아들이지만 확실히 목표가 달성되도록 분명히 감독한다.", c: "역할과 책임을 분명하게 해주고 신중하게 관리, 감독을 한다.", d: "역할과 책임을 결정하는데 직원들을 참여시키고 지나친 감시는 피한다." } },
+            { q: "6. 이제까지 효과적으로 운영되어 오던 팀을 새로 담당하게 되었다. 전임자는 팀을 확실하게 통제하면서 운영을 하였다. 리더로서 생산성도 유지하면서 인간적인 측면을 더욱 드러내며 팀을 운영하고자 한다.", options: { a: "직원들이 자신감을 갖고 스스로 업무의 중요성을 인식하도록 격려한다.", b: "업무의 중요성과 업무 마감기한을 구체적으로 강조하고 지시한다.", c: "일부러 직원들의 업무 행동에 개입을 하지 않는다.", d: "직원들을 의사결정에 참여시키면서, 확실히 목표가 달성되도록 주시한다." } },
+            { q: "7. 업무의 절차를 바꾸려고 한다. 필요한 변화에 대하여 직원들은 몇 가지 의견을 제안했다. 지금까지 업무를 추진하는데 있어 대체로 직원들의 참여가 폭넓게 이루어지고 있다.", options: { a: "변화방향을 구체적으로 지시하고 주의 깊게 감독한다.", b: "변화를 추진하는데 팀원들을 참여시켜 결정하고 실행은 직원들에게 맡긴다.", c: "직원들의 의견을 수용하여 업무 절차를 바꾸지만 실행할 때는 신중히 관리감독을 한다.", d: "직원들과 마찰을 피하고 되도록 관여하지 않는다." } },
+            { q: "8. 팀의 업무성과와 인간관계 모두 매우 양호한 편이다. 그러나 리더는 자신의 리더십 스타일에 약간의 불만을 느끼고 있다.", options: { a: "특별한 조치를 취하지 않는다.", b: "이러한 상황에 대해 직원들과 상의한 다음 필요한 변화를 취한다.", c: "업무를 정확히 할 수 있도록 직원들을 지시하고 지도한다.", d: "직원들에게 이 상황에 대해 논의하도록 지원하고 지나친 지시는 하지 않는다." } },
+            { q: "9. 업무 추진이 자꾸 늦어지고 있다. 직원들이 회의 참석률이 좋지 않고 회의 시 산만하다. 그러나 직원들의 업무에 필요한 잠재능력은 어느 정도 있다고 판단된다.", options: { a: "직원들이 스스로 문제를 해결하도록 기회를 부여한다.", b: "직원들의 의견을 받아 들이지만 업무목표가 명확히 달성될 수 있도록 관리감독을 한다.", c: "목표를 명확히 지시하고 업무의 추진을 구체적으로 감독한다.", d: "업무 목표설정에 직원들을 참여시키고 함께 결정을 한다." } },
+            { q: "10. 지금까지 직원들은 지시에 효과적으로 응했다. 그러나 최근 업무기준을 명확히 강화한 뒤부터는 이에 호응하지 않는 경향이 생긴 것 같다.", options: { a: "직원들은 참여시켜 기준을 명확히 하는 대신에 통제나 감독은 되도록 하지 않는다.", b: "강화된 업무기준을 명확히 하고 관리감독을 철저히 한다.", c: "직원들과 대립을 피하기 위해 압력을 가하지 않으며, 업무상황에 대해 직원들에게 맡긴다.", d: "직원들의 의견을 듣지만 업무의 새로운 기준이 지켜지도록 확실하게 설명하고 관리한다." } },
+            { q: "11. 직원들은 업무방향과 업무처리에 대한 의사결정에 참여하고 있다. 인간관계도 좋은 편이다. 직원들을 효과적으로 관리하기 위해 다음과 같이 한다.", options: { a: "업무가 명확히 추진되도록 직원들을 지시하여 지도한다.", b: "업무를 결정할 때 직원들을 격려하며, 뛰어난 업무에 대해서는 칭찬을 한다.", c: "업무실적을 직원들과 검토한 다음 업무추진을 주도적으로 결정한다.", d: "직원들의 업무상황에 특별히 개입하지 않는다." } },
+            { q: "12. 최근 정보에 의하면 직원들 내부에 문제가 생긴 것 같다. 지금까지 직원들은 뛰어난 실적을 기록하고 있으며, 상호간에 협력적인 분위기를 갖고 있다. 직원들의 업무수행 능력은 높은 편이다.", options: { a: "문제해결의 방향을 생각해 보고 직원들과 이를 협의한 후 대책을 결정한다.", b: "직원들 스스로 문제를 해결할 수 있도록 유도한다.", c: "신속히 사태를 개선하기 위해 분명히 지시한다.", d: "문제해결에 직원들을 참여시켜 지원한다." } }
+        ];
+
+        const typeMap = { 0: { a: 1, c: 2, b: 3, d: 4 }, 1: { d: 1, a: 2, c: 3, b: 4 }, 2: { c: 1, a: 2, d: 3, b: 4 }, 3: { b: 1, d: 2, a: 3, c: 4 }, 4: { c: 1, b: 2, d: 3, a: 4 }, 5: { b: 1, d: 2, a: 3, c: 4 }, 6: { a: 1, c: 2, b: 3, d: 4 }, 7: { c: 1, b: 2, d: 3, a: 4 }, 8: { c: 1, b: 2, d: 3, a: 4 }, 9: { b: 1, d: 2, a: 3, c: 4 }, 10: { a: 1, c: 2, b: 3, d: 4 }, 11: { c: 1, a: 2, d: 3, b: 4 } };
+        const scoreMap = { 0: { d: -2, b: -1, c: 1, a: 2 }, 1: { b: -2, d: -1, c: 1, a: 2 }, 2: { c: -2, b: -1, a: 1, d: 2 }, 3: { b: -2, d: -1, a: 1, c: 2 }, 4: { a: -2, d: -1, b: 1, c: 2 }, 5: { c: -2, a: -1, b: 1, d: 2 }, 6: { a: -2, c: -1, d: 1, b: 2 }, 7: { c: -2, b: -1, d: 1, a: 2 }, 8: { a: -2, d: -1, b: 1, c: 2 }, 9: { b: -2, c: -1, a: 1, d: 2 }, 10: { a: -2, c: -1, d: 1, b: 2 }, 11: { c: -2, a: -1, d: 1, b: 2 } };
+
+        let currentQuestion = 0;
+        let userAnswers = Array(12).fill(null); // 초기 답변 배열 (null로 채움)
+
+        function startQuiz() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('question-text').innerText = question.q;
+            document.getElementById('progress-text').innerText = `문항 ${currentQuestion + 1} / 12`;
+            document.getElementById('progress-fill').style.width = `${((currentQuestion + 1) / 12) * 100}%`;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            Object.entries(question.options).forEach(([key, text]) => {
+                const isSelected = userAnswers[currentQuestion] === key;
+                const btn = document.createElement('button');
+                // 이전에 선택했던 답이라면 강조 표시
+                btn.className = `option-btn w-full p-4 text-left rounded-xl flex items-start gap-3 fade-in ${isSelected ? 'bg-indigo-600/30 border-indigo-500' : ''}`;
+                btn.innerHTML = `
+                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full ${isSelected ? 'bg-indigo-500 text-white' : 'bg-white/10 text-indigo-400'} text-xs font-bold shrink-0 mt-0.5">${key.toUpperCase()}</span>
+                    <span class="text-sm leading-relaxed">${text}</span>
+                `;
+                btn.onclick = () => handleAnswer(key);
+                container.appendChild(btn);
+            });
+
+            // 이전 문항 버튼 제어 (첫 문항에서는 숨김)
+            const prevBtn = document.getElementById('prev-btn');
+            if (currentQuestion > 0) {
+                prevBtn.classList.remove('hidden');
+            } else {
+                prevBtn.classList.add('hidden');
+            }
+        }
+
+        function handleAnswer(key) {
+            userAnswers[currentQuestion] = key; // 답변 저장 (인덱스 기반)
+            if (currentQuestion < 11) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function updateStatus(id, count) {
+            const tag = document.getElementById(`status-${id}`);
+            tag.className = 'status-tag';
+            if (count < 3) {
+                tag.innerText = "강화 필요";
+                tag.classList.add('status-low');
+            } else if (count === 3) {
+                tag.innerText = "균형";
+                tag.classList.add('status-equal');
+            } else {
+                tag.innerText = "조절 필요";
+                tag.classList.add('status-high');
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const counts = { S1: 0, S2: 0, S3: 0, S4: 0 };
+            let totalScore = 0;
+
+            userAnswers.forEach((answer, index) => {
+                if (answer) {
+                    const typeNum = typeMap[index][answer];
+                    counts[`S${typeNum}`]++;
+                    totalScore += scoreMap[index][answer];
+                }
+            });
+
+            // 매트릭스 숫자 및 상태 업데이트
+            ['S1', 'S2', 'S3', 'S4'].forEach(s => {
+                document.getElementById(`count-${s}`).innerText = counts[s];
+                updateStatus(s, counts[s]);
+                
+                // 주된 유형 강조 (가장 높은 것 중 3 초과일 때)
+                const maxVal = Math.max(counts.S1, counts.S2, counts.S3, counts.S4);
+                if(counts[s] === maxVal && maxVal > 3) {
+                    document.getElementById(`box-${s}`).classList.add('active');
+                } else {
+                    document.getElementById(`box-${s}`).classList.remove('active');
+                }
+            });
+
+            // 효과성 점수 업데이트 (숫자만 표시)
+            document.getElementById('total-score').innerText = (totalScore > 0 ? '+' : '') + totalScore;
+        }
+    </script>
+</body>
+</html>
