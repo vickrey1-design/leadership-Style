@@ -285,6 +285,58 @@
                     <div class="text-7xl font-black text-white mb-2" id="total-score">0</div>
                     <p class="text-indigo-400 font-medium text-sm">최종 합계 점수</p>
                 </div>
+
+                <!-- 효과성 점수 해석 표 및 가이드 섹션 -->
+                <div class="mt-6 space-y-4">
+                    <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-5 md:p-6 overflow-hidden">
+                        <h4 class="text-sm font-bold text-slate-200 mb-3 text-left flex items-center gap-2">
+                            <span>📊</span> 효과성 점수 해석 (읽는 법)
+                        </h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs md:text-sm">
+                                <thead>
+                                    <tr class="border-b border-white/10 text-emerald-400 font-bold">
+                                        <th class="py-2.5 px-3 w-28 md:w-36">합계 점수</th>
+                                        <th class="py-2.5 px-3">읽는 법</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-white/5 text-slate-300">
+                                    <tr id="score-row-4" class="transition-all duration-300">
+                                        <td class="py-3 px-3 font-bold text-emerald-400 whitespace-nowrap">+13 ~ +24</td>
+                                        <td class="py-3 px-3 keep-all">상황을 읽고 방식을 바꾸는 폭이 넓습니다.</td>
+                                    </tr>
+                                    <tr id="score-row-3" class="transition-all duration-300">
+                                        <td class="py-3 px-3 font-bold text-emerald-400 whitespace-nowrap">+1 ~ +12</td>
+                                        <td class="py-3 px-3 keep-all">바꾸긴 하지만 특정 상황에서 쏠립니다.</td>
+                                    </tr>
+                                    <tr id="score-row-2" class="transition-all duration-300">
+                                        <td class="py-3 px-3 font-bold text-emerald-400 whitespace-nowrap">-12 ~ 0</td>
+                                        <td class="py-3 px-3 keep-all">한두 가지 방식을 주로 반복하고 있습니다.</td>
+                                    </tr>
+                                    <tr id="score-row-1" class="transition-all duration-300">
+                                        <td class="py-3 px-3 font-bold text-emerald-400 whitespace-nowrap">-24 ~ -13</td>
+                                        <td class="py-3 px-3 keep-all">상황과 반대로 대응하는 경우가 잦습니다.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 오해 금지 안내 박스 -->
+                    <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 md:p-5 text-left flex flex-col sm:flex-row gap-3 items-start">
+                        <span class="inline-flex items-center justify-center px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 text-xs font-bold shrink-0 border border-amber-500/30">
+                            오해 금지
+                        </span>
+                        <p class="text-xs md:text-sm text-amber-200/90 leading-relaxed keep-all">
+                            높은 점수 = 좋은 리더가 아닙니다. 상황을 읽는 폭을 보는 도구이며, 낮게 나온 것은 지금 우리 팀 상황이 한 가지 방식을 요구했기 때문일 수도 있습니다.
+                        </p>
+                    </div>
+
+                    <!-- 출처 표기 -->
+                    <p class="text-[11px] text-slate-400/70 text-left pl-1">
+                        출처: Hersey & Blanchard (1988), Management of Organizational Behavior, 5th ed., Prentice-Hall
+                    </p>
+                </div>
             </div>
 
             <div class="flex gap-3">
@@ -419,6 +471,25 @@
             });
 
             document.getElementById('total-score').innerText = (totalScore > 0 ? '+' : '') + totalScore;
+
+            // 효과성 점수 구간별 행 하이라이트 처리
+            const rows = [
+                { id: 'score-row-4', min: 13, max: 24 },
+                { id: 'score-row-3', min: 1, max: 12 },
+                { id: 'score-row-2', min: -12, max: 0 },
+                { id: 'score-row-1', min: -24, max: -13 }
+            ];
+
+            rows.forEach(r => {
+                const el = document.getElementById(r.id);
+                if (!el) return;
+                // 기존 강조 스타일 초기화
+                el.classList.remove('bg-indigo-600/25', 'ring-1', 'ring-indigo-400', 'font-semibold');
+                if (totalScore >= r.min && totalScore <= r.max) {
+                    // 해당 구간 강조 표시
+                    el.classList.add('bg-indigo-600/25', 'ring-1', 'ring-indigo-400', 'font-semibold');
+                }
+            });
         }
     </script>
 </body>
